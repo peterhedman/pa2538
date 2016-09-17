@@ -15,14 +15,53 @@
 
 
 html{
+	/*
 	background:url('../img/bg.jpg') #b46b24 no-repeat center center fixed;
-	min-height:100%;
 	background-size:cover;
+	*/
+	background: #FFF;
+	min-height:100%;
+	
+}
+
+h1, h2, h3, button{
+	font-family: 'ABeeZee', sans-serif !important;
+}
+
+#wrapper{
+	width:100%;
+}
+
+#header{
+	background:url('../img/header-bg2.jpg') no-repeat;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	width:100%;
+	height: 40vw;
+	text-align:center;
+    display:table;
+	
+}
+
+#header h1{
+	vertical-align:middle;
+    display:table-cell;
+	font-size: 3.7vw;
+	color: #000;
+	text-shadow: 1px 1px 1px #aaa;
+
+}
+
+#header h1 #toppen{
+	font-size: 7vw;
+	margin-bottom: -2vw;
 }
 
 body{
 	font:15px/1.3 'Open Sans', sans-serif;
-	color: #fff;
+	color: #5a5757;
 	min-height:100%;
 }
 
@@ -46,14 +85,17 @@ section, footer, header, aside{
 
 
 #login-register{
-	background-color:#242424;
+	background-color:#55b2ef;
 	padding: 65px 75px;
 	width:500px;
 	height:320px;
-	position:absolute;
+	color: #FFF;
+	/*position:absolute;
 	top:50%;
 	left:50%;
 	margin:-235px 0 0 -325px;
+	*/
+	margin: 5em auto;
 
 	box-shadow:0 2px 5px rgba(0,0,0,0.5);
 }
@@ -66,7 +108,7 @@ section, footer, header, aside{
 	font: inherit;
 	font-size: 18px;
 	line-height: 30px;
-	background-color: #363636;
+	background-color: #cecece;
 	color: #fff;
 	padding: 10px 20px;
 	border: none;
@@ -113,12 +155,13 @@ section, footer, header, aside{
 #login-register span{
 	line-height:1.4;
 	font-size: 12px;
-	position: absolute;
+	/*position: absolute;*/
 	bottom: 95px;
 	width: 225px;
 	height: 20px;
-	right: 80px;
+	/*right: 80px;*/
 	color: #85bb2f;
+	margin-left: 10px;
 	background:url('../img/preloader.gif') 0 -1000px no-repeat;
 }
 
@@ -188,13 +231,13 @@ section, footer, header, aside{
 
 footer{
 
-	width: 770px;
+	width: 100%;
 	font: normal 16px Arial, Helvetica, sans-serif;
 	padding: 15px 35px;
-	position: fixed;
+	/*position: fixed;*/
 	bottom: 0;
-	left: 50%;
-	margin-left: -420px;
+	/*left: 50%;*/
+	/*margin-left: -420px;*/
 
 	background-color:#1f1f1f;
 

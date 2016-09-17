@@ -11,24 +11,12 @@ if(!$user->loggedIn()){
 	redirect('index.php');
 }
 
+$page_title = "DoYouWannaJoin - Protectd";
+$page_description = "En Sida för den aktiva";
+
 ?>
 
-<!DOCTYPE html>
-<html>
-
-	<head>
-		<meta charset="utf-8"/>
-		<title>Protected page</title>
-
-		<!-- The main CSS file -->
-		<link href="assets/css/style.css" rel="stylesheet" />
-
-		<!--[if lt IE 9]>
-			<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-		<![endif]-->
-	</head>
-
-	<body>
+<?php include("includes/header.php"); ?>
 
 		<div id="protected-page">
 			<img src="assets/img/lock.jpg" alt="Lock" />
@@ -38,9 +26,8 @@ if(!$user->loggedIn()){
 				Rank: <b style="text-transform:capitalize"><?php echo $user->rank() ?></b>
 			</p>
 
-			<a href="index.php?logout=1" class="logout-button">Logout</a>
+			<a href="login-form.php?logout=1" class="logout-button">Logout</a>
 
 		</div>
 
-	</body>
-</html>
+<?php include("includes/footer.php"); ?>
