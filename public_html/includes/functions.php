@@ -125,8 +125,9 @@ function loginOrRegister($email){
 	// If such a user already exists, return it
 
 	if(exists($email)){
-		$user = new User("x",$email);
-		$user->generateToken();
+		$user = new User("x",$email); //gets the User by email
+		$user->generateToken(); // Update Token
+		$user = new User("x",$email); // Gets the new user after update
 		return $user;
 		
 		//error_log("email: " . $email);		

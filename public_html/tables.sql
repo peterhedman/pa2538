@@ -41,7 +41,9 @@ CREATE TABLE IF NOT EXISTS `reg_logged_ip` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `email` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
   `ip` int(11) unsigned NOT NULL,
+  `uniquekey` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
   `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniquekey` (`uniquekey`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 

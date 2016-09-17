@@ -173,7 +173,15 @@ class User{
 	public function create_logged_in_ip_log($ip){
 		global $db;
 		// Create a new record in the login attempt table
-		$result = $db -> query("INSERT INTO `reg_logged_ip` (`ip`, `email`) VALUES ('" . sprintf("%u", ip2long($ip)) . "', '" . $this->email . "') ON DUPLICATE KEY UPDATE `ts`=NOW()");
+		/*
+		INSERT INTO daily_events (created_on, last_event_id, last_event_created_at)
+  VALUES ('2010-01-19', 23, '2010-01-19 10:23:11')
+ON DUPLICATE KEY UPDATE
+  last_event_id = IF(last_event_created_at < VALUES(last_event_created_at), VALUES(last_event_id), last_event_id);
+		*/
+		
+		$result = $db -> query("INSERT INTO `reg_logged_ip` (`ip`, `email`, `uniquekey`) VALUES ('" . sprintf("%u", ip2long($ip)) . "', '" . $this->email . "', '" . sprintf("%u", ip2long($ip)) . "-" . $this->email . "') ON DUPLICATE KEY UPDATE `ts`= NOW()");
+		
 	}
 	
 	
