@@ -159,7 +159,7 @@ catch(Exception $e){
 
     <h1>Login or Register</h1>
 
-    <input type="text" placeholder="your@email.com" name="email" autofocus />
+    <input type="text" placeholder="your@email.com" name="email" /> <!-- NOT autofocus -->
     <p>Enter your email address above and we will send <br />you a login link.<br />Or if you are a recognized user then you will log in.</p>
 
     <button type="submit">Login / Register</button>
