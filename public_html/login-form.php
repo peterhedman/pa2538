@@ -137,6 +137,8 @@ try{
 		die(json_encode(array(
 			'message' => 'Thank you! We\'ve sent a link to your inbox. Check your spam folder as well.'
 		)));
+		
+		header('Location: protected.php');
 	}
 }
 catch(Exception $e){

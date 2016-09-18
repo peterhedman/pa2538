@@ -53,7 +53,7 @@ function loginForm(){
 				messageHolder.text(m.message);
 				
 				if(m.message == "You're logging in..."){
-					 location.reload(); 
+					 window.location = "/protected.php";
 				}
 			}
 			else{
