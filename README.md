@@ -11,4 +11,6 @@ http://tutorialzine.com/2013/08/simple-registration-system-php-mysql/#protected-
 Layout inspiration:
 https://se.pinterest.com/pin/189432728056503073/
 
+Website location:
+http://pa2538.topweb.se/
 
