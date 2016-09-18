@@ -1,7 +1,9 @@
 <?php
 
-$page_title = "DoYouWannaJoin";
+$thisPage = "Home";
+$page_title = "DoYouWannaJoin - " . $thisPage;
 $page_description = "En Sida för den aktiva";
+
 
 ?>
 

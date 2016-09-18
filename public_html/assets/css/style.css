@@ -303,6 +303,10 @@ footer{
 	
 }
 
+#nav #currentpage a{
+	background-color: #168bd7 !important;
+}
+
 #nav a {
     display:block;
 }

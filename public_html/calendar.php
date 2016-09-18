@@ -1,6 +1,7 @@
 <?php
 
-$page_title = "DoYouWannaJoin - Schema";
+$thisPage = "Calendar";
+$page_title = "DoYouWannaJoin - " . $thisPage;
 $page_description = "En Sida för den aktiva";
 
 ?>

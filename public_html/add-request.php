@@ -11,7 +11,8 @@ if(!$user->loggedIn()){
 	redirect('index.php');
 }
 
-$page_title = "DoYouWannaJoin - Add Request";
+$thisPage = "Add Request";
+$page_title = "DoYouWannaJoin - " . $thisPage;
 $page_description = "En Sida för den aktiva";
 
 /*

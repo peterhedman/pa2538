@@ -45,9 +45,8 @@
         <a href="#nav" title="Show navigation">Show navigation</a>
         <a href="#" title="Hide navigation">Hide navigation</a>
         <ul>
-            <li><a href="/">Home</a></li>
-            <li>
-                <a href="/" aria-haspopup="true">Run Paths</a>
+            <li <?php if ($thisPage=="Home") echo " id=\"currentpage\""; ?>><a href="/">Home</a></li>
+            <li <?php if ($thisPage=="Run Paths") echo " id=\"currentpage\""; ?>><a href="/" aria-haspopup="true">Run Paths</a>
                 <ul>
                     <li><a href="/">Kungsmarken</a></li>
                     <li><a href="/">Galgamarken</a></li>
@@ -55,18 +54,17 @@
                     <li><a href="/">Saltö</a></li>
                 </ul>
             </li>
-            <li><a href="calendar.php">Calendar</a></li>
+            <li <?php if ($thisPage=="Calendar") echo " id=\"currentpage\""; ?>><a href="calendar.php">Calendar</a></li>
            
             <?php
-            if($user->loggedIn()){
-				echo '<li><a href="add-request.php">Add Run Request</a></li>';
-				echo '<li><a href="my-profile.php">My profile</a></li>';
-				echo '<li><a href="login-form.php?logout=1" class="logout-button">Logout</a></li>';
-			} else {
-			 	echo '<li><a href="login.php">login</a></li>';
-			}
-			?>
+            if($user->loggedIn()){?>
+				<li <?php if ($thisPage=="Add Request") echo " id=\"currentpage\""; ?>><a href="add-request.php">Add Request</a></li>
+				<li <?php if ($thisPage=="My profile") echo " id=\"currentpage\""; ?>><a href="my-profile.php">My profile</a></li>
+				<li <?php if ($thisPage=="Logout") echo " id=\"currentpage\""; ?>><a href="login-form.php?logout=1" class="logout-button">Logout</a></li>
+			<?php } else { ?>
+			 	<li <?php if ($thisPage=="Login") echo " id=\"currentpage\""; ?>><a href="login.php">Login</a></li>
+			<?php } ?>
             
-            <li><a href="contact.php">Contact</a></li>
+            <li <?php if ($thisPage=="Contact") echo " id=\"currentpage\""; ?>><a href="contact.php">Contact</a></li>
         </ul>
     </nav>

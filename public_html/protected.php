@@ -11,7 +11,8 @@ if(!$user->loggedIn()){
 	redirect('index.php');
 }
 
-$page_title = "DoYouWannaJoin - Protectd";
+$thisPage = "Protected";
+$page_title = "DoYouWannaJoin - " . $thisPage;
 $page_description = "En Sida för den aktiva";
 
 ?>

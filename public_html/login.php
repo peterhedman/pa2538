@@ -2,7 +2,8 @@
 
 require_once 'includes/main.php';
 
-$page_title = "DoYouWannaJoin - Login";
+$thisPage = "Login";
+$page_title = "DoYouWannaJoin - " . $thisPage;
 $page_description = "En Sida för den aktiva";
 
 /*--------------------------------------------------

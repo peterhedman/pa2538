@@ -11,7 +11,8 @@ if(!$user->loggedIn()){
 	redirect('index.php');
 }
 
-$page_title = "DoYouWannaJoin - Setup";
+$thisPage = "My profile";
+$page_title = "DoYouWannaJoin - " . $thisPage;
 $page_description = "En Sida för den aktiva";
 
 if (isset($_POST['remove_ip'])) {
