@@ -9,6 +9,7 @@ class User{
 	var $last_login;
 	var $token;
 	var $token_validity;
+	var $prefered_ip;
 	
 	public function __construct() {
         $get_arguments       = func_get_args();
@@ -71,7 +72,8 @@ class User{
 				$this->rank = $row["rank"];
 				$this->last_login = $row["last_login"];
 				$this->token = $row["token"];
-				$this->token_validity = $row["token_validity"];	
+				$this->token_validity = $row["token_validity"];
+				$this->prefered_ip = $row["prefered_ip"];
 			
 			}
 		 }
@@ -182,6 +184,34 @@ ON DUPLICATE KEY UPDATE
 		
 		$result = $db -> query("INSERT INTO `reg_logged_ip` (`ip`, `email`, `uniquekey`) VALUES ('" . sprintf("%u", ip2long($ip)) . "', '" . $this->email . "', '" . sprintf("%u", ip2long($ip)) . "-" . $this->email . "') ON DUPLICATE KEY UPDATE `ts`= NOW()");
 		
+	}
+	
+	public function get_logged_ipadresses(){
+		global $db;
+		
+		$result =  $db -> select("SELECT * FROM `reg_logged_ip` WHERE `email`='" . $this->email . "' ORDER BY `ts` DESC");	
+		
+		return $result;
+	}
+	
+	public function remove_user_ip($unique_key){
+		global $db;
+		$result =  $db -> query("DELETE FROM `reg_logged_ip` WHERE `uniquekey` ='".$unique_key."'");	
+		return $result;
+	}
+	
+	public function remove_user(){
+		global $db;
+		$result =  $db -> query("DELETE `reg_users`, `reg_logged_ip` FROM `reg_users` INNER JOIN `reg_logged_ip` WHERE `reg_users`.`email` = `reg_logged_ip`.`email` AND `reg_users`.`email` ='".$this->email."'");	
+		return $result;
+	}
+	
+	public function set_prefered_ip($ip_choise){
+		global $db;
+		
+		$result = $db -> query("UPDATE `reg_users` SET `prefered_ip`='".$ip_choise."' WHERE `email`='". $this->email."'");
+		
+		return $result;
 	}
 	
 	

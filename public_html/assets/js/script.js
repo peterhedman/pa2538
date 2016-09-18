@@ -1,7 +1,19 @@
 $( document ).ready(function() {
     loginForm();
 	navigation();
+	navigationWidth();
 });
+
+function navigationWidth(){
+	
+	var nrTotLi = $('#nav ul li').length;
+	var nrLiChildren = $("#nav ul li ul").children().length;
+	var nrLi = nrTotLi - nrLiChildren;
+
+	var liWidth = 100/nrLi;
+	
+	$('#nav > ul > li').css("width", liWidth+"%");
+}
 
 function loginForm(){
 	

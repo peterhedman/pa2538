@@ -30,7 +30,7 @@ function get_page_url(){
 function rate_limit($ip, $limit_hour = 20, $limit_10_min = 10){
 	global $db;
 	// The number of login attempts for the last hour by this IP address
-	$result = $db -> select("SELECT COUNT(*) AS countH FROM `reg_login_attempt` GROUP BY `ip`='". sprintf("%u", ip2long($ip)) . "' WHERE  `ts` > SUBTIME(NOW(),'1:00')");
+	$result = $db -> select("SELECT COUNT(*) AS countH FROM `reg_login_attempt` GROUP BY `ip`='". sprintf("%u", ip2long($ip)) . "' WHERE  `ts` > 'SUBTIME(NOW(),'1:00')'");
 	
 	if (is_array($result)) {
 		foreach($result as $row){
@@ -39,7 +39,7 @@ function rate_limit($ip, $limit_hour = 20, $limit_10_min = 10){
 	}
 	
 	// The number of login attempts for the last 10 minutes by this IP address
-	$result =  $db -> select("SELECT COUNT(*) AS countM FROM `reg_login_attempt` GROUP BY `ip`='". sprintf("%u", ip2long($ip)) . "' WHERE `ts` > SUBTIME(NOW(),'0:10')");
+	$result =  $db -> select("SELECT COUNT(*) AS countM FROM `reg_login_attempt` GROUP BY `ip`='". sprintf("%u", ip2long($ip)) . "' WHERE `ts` > 'SUBTIME(NOW(),'0:10')'");
 	
 	if (is_array($result)) {
 		foreach($result as $row){
@@ -76,25 +76,35 @@ function check_if_current_user($ip, $email){
 	}
 	
 	// Gets the latest ip from database
-	$last_db_ip = array_pop((array_slice($ip_array, -1)));
+	//$last_db_ip = array_pop((array_slice($ip_array, -1)));
 	
-	// Checks if the database ip and the login attempt ip is the same AND if the User excists by email
-	if(exists($email) && $last_db_ip == $ip){
+	// Checks AND if the User excists by email
+	if(exists($email)){
 		
 		$user = new User("x",$email);
-		//error_log("INNANFÖR User: " . json_encode($user) . " GETTOKEN: " . $user->getToken());
 		
-		// Exstends the token validity
-		$result = $db -> query("UPDATE `reg_users` SET `token_validity`=ADDTIME(NOW(),'0:10') WHERE `email`=". $email);
+		$preferedIP = $user->prefered_ip;
 		
-		if($result){		
-			$user->login();
-			// Javascript checks if it's this message and if it is then reload page.
-			throw new Exception('You\'re logging in...');
+		//checks if user selected all ip (1) and if the ip is in reg_logged_ip table
+		if($preferedIP == 1 && in_array($ip, $ip_array)){
+			logging_in($user);
+			
+		//Checks if preferd ip is the current ip
+		} else if($preferedIP == $ip){
+			logging_in($user);
 		}
-		
 	}
-	
+}
+
+function logging_in($user)
+{
+	global $db;
+	$result = $db -> query("UPDATE `reg_users` SET `token_validity`=ADDTIME(NOW(),'0:10') WHERE `email`='". $user->email."'");
+	if($result){		
+		$user->login();
+		// Javascript checks if it's this message and if it is then reload page.
+		throw new Exception('You\'re logging in...');
+	}
 }
 
 

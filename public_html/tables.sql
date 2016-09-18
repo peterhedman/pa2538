@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS `reg_users` (
   `last_login` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `token` varchar(128) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'not set',
   `token_validity` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `prefered_ip` int(11) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `token` (`token`)

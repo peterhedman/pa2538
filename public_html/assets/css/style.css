@@ -146,7 +146,7 @@ section, footer, header, aside, wrapper{
 	padding: 10px 20px;
 	border: none;
 	display: block;
-	width: 450px;
+	width: 90%;
 	margin: 45px 0 15px;
 	outline: none;
 }
@@ -207,6 +207,24 @@ section, footer, header, aside, wrapper{
 	background-position: 0 100%;
 }
 
+@media screen and (max-device-width: 736px){
+	
+	#login-register{
+		width: 90% !important;
+		padding: 1em;
+		font-size: 3.2em;
+		margin: 1em 0px !important;
+	}
+}
+
+@media screen and (max-width: 736px){
+	#login-register{
+		width: 90% !important;
+		padding: 1em;
+		margin: 1em 0px !important;
+	}
+}
+
 
 /*-------------------------
 	The protected page
@@ -264,75 +282,10 @@ section, footer, header, aside, wrapper{
 
 footer{
 
-	width: 100%;
-	font: normal 16px Arial, Helvetica, sans-serif;
-	padding: 15px 35px;
-	/*position: fixed;*/
-	bottom: 0;
-	/*left: 50%;*/
-	/*margin-left: -420px;*/
-
 	background-color:#1f1f1f;
-	/*background:-webkit-linear-gradient(top, #1f1f1f, #101010);
-	background:-moz-linear-gradient(top, #1f1f1f, #101010);
-	background:linear-gradient(top, #1f1f1f, #101010);
-	*/
-	border-radius:2px 2px 0 0;
-
-	box-shadow: 0 -1px 4px rgba(0,0,0,0.4);
-	z-index:1;
-}
-
-footer a.tz{
-	font-weight:normal;
-	font-size:16px !important;
-	text-decoration:none !important;
-	display:block;
-	margin-right: 300px;
-	text-overflow:ellipsis;
-	white-space: nowrap;
-	color:#bfbfbf !important;
-	z-index:1;
-}
-
-footer a.tz:before{
-	content: '';
-	background: url('http://cdn.tutorialzine.com/misc/enhance/v2_footer_bg.png') no-repeat 0 -53px;
-	width: 138px;
-	height: 20px;
-	display: inline-block;
-	position: relative;
-	bottom: -3px;
-}
-
-footer .close{
-	position: absolute;
-	cursor: pointer;
-	width: 8px;
-	height: 8px;
-	background: url('http://cdn.tutorialzine.com/misc/enhance/v2_footer_bg.png') no-repeat 0 0px;
-	top:10px;
-	right:10px;
-	z-index: 3;
-}
-
-footer #tzine-actions{
-	position: absolute;
-	top: 8px;
-	width: 500px;
-	right: 50%;
-	margin-right: -650px;
-	text-align: right;
-	z-index: 2;
-}
-
-footer #tzine-actions iframe{
-	display: inline-block;
-	height: 21px;
-	width: 95px;
-	position: relative;
-	float: left;
-	margin-top: 11px;
+	padding: 15px 35px;
+	min-height: 4em;
+	
 }
 
 /*----------------------------
@@ -400,7 +353,7 @@ footer #tzine-actions iframe{
 
 }
 #nav > ul > li{
-	width: 25%;
+	/*width: 20%; /* is set buy javascript, dependet on number of links in header*/ 
 	height: 100%;
 	float: left;
 }
@@ -465,20 +418,23 @@ footer #tzine-actions iframe{
 }
 
 
-@media only screen and ( max-width: 40em ) /* 640 */{
+@media screen and (max-device-width: 736px) {
 
 	#nav{
 		position: relative;
 		top: auto;
 		left: auto;
+		z-index: 999;
+		
 	}
 	#nav > a {
-		width: 3.125em; /* 50 */
-		height: 3.125em; /* 50 */
+		width: 7em; /* 50 */
+		height: 7em; /* 50 */
 		text-align: left;
 		text-indent: -9999px;
 		background-color: #55b2ef;
 		position: relative;
+		
 	}
 	#nav > a:before, #nav > a:after{
 		position: absolute;
@@ -515,6 +471,7 @@ footer #tzine-actions iframe{
 	}
 	#nav > ul > li > a{
 		height: auto;
+		font-size: 3em;
 		text-align: left;
 		padding: 0 0.833em; /* 20 (24) */
 	}
