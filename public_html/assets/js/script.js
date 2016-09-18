@@ -2,7 +2,19 @@ $( document ).ready(function() {
     loginForm();
 	navigation();
 	navigationWidth();
+	confirmDialog();
 });
+
+
+function confirmDialog(){
+    $("input.confirm").click(function(e){
+        if(!confirm('Are you sure?')){
+            e.preventDefault();
+            return false;
+        }
+        return true;
+    });
+}
 
 function navigationWidth(){
 	

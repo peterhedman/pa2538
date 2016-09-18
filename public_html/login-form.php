@@ -63,13 +63,13 @@ if(isset($_GET['logout'])){
 	logged-in users.
 ---------------------------------------------------*/
 
-
+/*
 $user = new User();
 
 if($user->loggedIn()){
 	redirect('protected.php');
 }
-
+*/
 
 
 /*--------------------------------------------------

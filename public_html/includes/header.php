@@ -55,18 +55,18 @@
                     <li><a href="/">Saltö</a></li>
                 </ul>
             </li>
-            <li><a href="/">Schema</a></li>
+            <li><a href="calendar.php">Calendar</a></li>
            
             <?php
             if($user->loggedIn()){
-				echo '<li><a href="protected-addrequest.php">Add Run Request</a></li>';
-				echo '<li><a href="protected-setup.php">Setup</a></li>';
+				echo '<li><a href="add-request.php">Add Run Request</a></li>';
+				echo '<li><a href="my-profile.php">My profile</a></li>';
 				echo '<li><a href="login-form.php?logout=1" class="logout-button">Logout</a></li>';
 			} else {
 			 	echo '<li><a href="login.php">login</a></li>';
 			}
 			?>
             
-            <li><a href="/">Contact</a></li>
+            <li><a href="contact.php">Contact</a></li>
         </ul>
     </nav>
