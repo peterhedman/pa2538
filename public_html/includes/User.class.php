@@ -129,7 +129,7 @@ class User{
 	 */
 	
 	public function isAdmin(){
-		return $this->rank == 'administrator';
+		return $this->rank == 9;
 	}
 	
 	/**
@@ -137,11 +137,15 @@ class User{
 	 */
 	
 	public function rank(){
-		if($this->rank == 1){
+		if($this->rank == 9){
 			return 'administrator';
+		} else if($this->rank == 2){
+			return 'advanced runner';
+		}else if($this->rank == 1){
+			return 'medium runner';
 		}
-	
-		return 'regular';
+		
+		return 'easy runner';
 	}
 	
 	

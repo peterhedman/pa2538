@@ -187,6 +187,46 @@ function exists($email){
 	return $count == 1;
 }
 
+function add_new_run_circuts($name, $length){
+	global $db;
+	$result = $db -> query("INSERT INTO `reg_run_circuts` (`title`, `length`) VALUES ('". $name . "','" . $length . "')");
+	return $result;
+}
+
+function get_all_run_circuts(){
+	global $db;
+	$result =  $db -> select("SELECT * FROM `reg_run_circuts`");
+	if ($result) {
+		return $result;
+	}
+	
+	return "no Circuts";
+	
+}
+
+function get_all_requests(){
+	global $db;
+	$result =  $db -> select("SELECT * FROM `reg_requests`");
+	if ($result) {
+		return $result;
+	}
+	
+	return "no requests";
+	
+}
+
+
+function add_new_Request($user_id, $run_circut_id, $name, $start_date, $start_time, $comment){
+	
+	global $db;
+	$result = $db -> query("INSERT INTO `reg_requests` (`user_id`, `run_circut_id`, `title`, `start_time`, `content`) VALUES ('". $user_id . "','" . $run_circut_id . "',
+	'" . $name . "','" . $start_date . " " . $start_time . ":00', '". $comment ."')");
+	
+	error_log("user_id: " . $user_id . " - run_circut_id: " . $run_circut_id . " - name: " . $name . " - start_time: " . $start_date . " " . $start_time . ":00 - comment: " . $comment);
+	
+	return $result;
+}
+
 
 function redirect($url){
 	header("Location: $url");

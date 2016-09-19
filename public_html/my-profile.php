@@ -15,6 +15,10 @@ $thisPage = "My profile";
 $page_title = "DoYouWannaJoin - " . $thisPage;
 $page_description = "En Sida för den aktiva";
 
+/*** 
+ The recived values via post
+ ***/
+
 if (isset($_POST['remove_ip'])) {
    $unique_key = $_POST['uniqe_key'];
    $result = $user->remove_user_ip($unique_key);
@@ -41,6 +45,47 @@ if (isset($_POST['remove_user'])) {
    $result = $user->remove_user();
    redirect('index.php');
 }
+
+$nameErr = $lengthErr = "";
+$name = $length = "";
+if (isset($_POST['new_run_circuts'])) {
+	if (empty($_POST["new_run_circuts_name"])) {
+		$nameErr = "Name is required";
+	} else {
+		$name = $_POST["new_run_circuts_name"];
+		// check if name only contains letters and whitespace
+		if (!preg_match("/^[a-zåäöA-ZÅÄÖ ]*$/",$name)) {
+			$nameErr = "Only letters and white space allowed";
+			$checkerName = false;
+		} else {
+			$checkerName = true;	
+		}
+	  }
+	  
+	if (empty($_POST["new_run_circuts_length"])) {
+		$lengthErr = "Length is required";
+	} else {
+		$length = $_POST["new_run_circuts_length"];
+		// check if name only contains letters and whitespace
+		if (!preg_match("/^[1-9][0-9]{0,10}$/",$length)) {
+			$lengthErr = "Length should be in meters, only numbers allowed";
+			$checkerLength = false;	
+		} else {
+			$checkerLength = true;	
+		}
+	}
+	
+	if($checkerName && $checkerLength){
+		$result = add_new_run_circuts($name, $length);
+	}
+	
+}
+  
+
+/***
+ The output forms
+***/
+
 
 function login_from_all(){
 	echo "<form name='login_from_all' method='post'>";
@@ -70,6 +115,17 @@ function delete_ip_unique_key($unique_key){
 	echo "</form>";
 }
 
+function new_run_circuts($nameErr, $lengthErr){
+	echo "<form name='add_new_run_circuts' method='post'>";
+	echo "Name: <input type='text' name='new_run_circuts_name' value='$new_run_circuts_name'>";
+	echo "<span class='error'>* $nameErr </span> </br>";
+	echo "Length: <input type='text' name='new_run_circuts_length' value='$new_run_circuts_length'>";
+	echo "<span class='error'>* $lengthErr </span> </br>";
+	echo "<input type='submit' class='confirm' name='new_run_circuts' value='Add new Circut'</br>";
+	echo "</form>";
+	echo "</br>";
+}
+
 
 ?>
 
@@ -82,6 +138,17 @@ function delete_ip_unique_key($unique_key){
 				Rank: <b style="text-transform:capitalize"><?php echo $user->rank() ?></b>
 			</p>
             </br>
+            
+            <?php 
+			
+			if($user->isAdmin()){
+				echo '<h2>Add Run circuts </h2>';
+				new_run_circuts($nameErr, $lengthErr);
+				
+			}
+			
+			
+			?>
             <h2>Your registred IP addresses</h2>
             <p>Current IP Adress: <?php echo $_SERVER['REMOTE_ADDR']?>
             </br>
