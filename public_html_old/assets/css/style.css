@@ -195,7 +195,8 @@ section, footer, header, aside, wrapper{
 	width: 225px;
 	height: 20px;
 	/*right: 80px;*/
-	color: #85bb2f;
+	/*color: #85bb2f;*/
+	color: #fff;
 	margin-left: 10px;
 	background:url('../img/preloader.gif') 0 -1000px no-repeat;
 }

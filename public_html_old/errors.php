@@ -1,6 +1,7 @@
 <?php
 
-require('includes/config.php');
+$page_title = "DoYouWannaJoin - 404";
+$page_description = "En Sida för den aktiva";
 
 
 $status = $_SERVER['REDIRECT_STATUS'];
@@ -23,7 +24,7 @@ $message = 'Please supply a valid HTTP status code.';
 }
 ?>
 
-<?php require('includes/header.php'); ?>
+<?php include("includes/header.php"); ?>
 
 		<div id="index" class="container" style="text-align:center;">
         	<?php
@@ -39,5 +40,5 @@ $message = 'Please supply a valid HTTP status code.';
         
         </div> <!-- END #index.container -->
         
-<?php require('includes/footer.php'); ?>
+<?php include("includes/footer.php"); ?>
 		

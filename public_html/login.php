@@ -1,30 +1,32 @@
 <?php
+//include config
+require_once('includes/config.php');
 
-require_once 'includes/main.php';
+//check if already logged in move to home page
+if( $user->is_logged_in() ){ header('Location: memberpage.php'); } 
 
-$thisPage = "Login";
-$page_title = "DoYouWannaJoin - " . $thisPage;
-$page_description = "En Sida för den aktiva";
+define('login', TRUE);
 
-/*--------------------------------------------------
-	Don't show the login page to already logged-in users.
----------------------------------------------------*/
-$user = new User();
+//define page title
+$title = 'Login';
 
-if($user->loggedIn()){
-	redirect('protected.php');
-}
-
-
+//include header template
+require('includes/header.php'); 
 ?>
 
-<?php include("includes/header.php"); ?>
+	
+<div class="container">
 
-		<div id="index" class="container">
-        
-        <?php include("login-form.php"); ?>
-        
-        </div> <!-- END #index.container -->
-        
-<?php include("includes/footer.php"); ?>
-		
+	<?php include('includes/login-form.php');
+	
+	 ?>
+
+
+
+</div>
+
+
+<?php 
+//include header template
+require('includes/footer.php'); 
+?>
