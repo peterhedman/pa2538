@@ -59,7 +59,7 @@ if(!empty($data))
 	$first_pos = json_encode($object_array[0]);
 	$end_pos = json_encode(end($object_array));
 	
-	error_log("first_pos: " . $first_pos);
+	//error_log("first_pos: " . $first_pos);
 	
 	//makes a only waypoint string
 	$waypoints = array_slice($waypoints, 1, -1);
@@ -76,10 +76,19 @@ if(!empty($data))
 	$userid = $_SESSION['userID'];
 	$type = $form_type;
 	
+	
+	if($type == "bicycling"){
+		$defualtSpeed = 7;
+	} else if($type == "running"){
+		$defualtSpeed = 4;
+	} else {
+		$defualtSpeed = 2;
+	}
+	
 	//error_log("user: " . $userid . " - start: " . $first_pos . " - end: " . $end_pos . " - Waypoints: " . $waypoint_string . " - Discanxe: " . $tot_distance . " - Date: " . $date . " - Time: " . $time . " - Type: " . $type . " - map_adress: " . $map_adress);
 	try {
 		
-		$stmt = $db->prepare('INSERT INTO trainingsession (user_id,date,time,start_location,end_location,waypoints,type,distance) VALUES (:user_id, :date, :time, :start_location,:end_location, :waypoints, :type, :distance)');
+		$stmt = $db->prepare('INSERT INTO trainingsession (user_id,date,time,start_location,end_location,waypoints,type,distance,default_speed) VALUES (:user_id, :date, :time, :start_location,:end_location, :waypoints, :type, :distance, :default_speed)');
 		$stmt->execute(array(
 		':user_id' => $userid,
 		':date' => $date,
@@ -88,7 +97,8 @@ if(!empty($data))
 		':end_location' => $end_pos,
 		':waypoints' => $waypoint_string,
 		':distance' => $tot_distance,
-		':type' => $type
+		':type' => $type,
+		':default_speed' => $defualtSpeed
 		));
 		
 		$id = $db->lastInsertId('id');
@@ -105,6 +115,18 @@ if(!empty($data))
 		}
 		
 }
+
+$target_path = "uploads/";
+
+$target_path = $target_path . basename( $_FILES['uploadedfile']['name']); 
+
+if(move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $target_path)) {
+    echo "The file ".  basename( $_FILES['uploadedfile']['name']). 
+    " has been uploaded";
+} else{
+    echo "There was an error uploading the file, please try again!";
+}
+
 
 
 /*
@@ -132,9 +154,9 @@ require('includes/header.php');
                 
                 <!-- <div id="map"></div> -->
 				<div id="map"></div>
-                <div id="right-panel">
+                
                   <p>Total Distance: <span id="total"></span></p>
-                </div>
+               
                 
                 
 				
@@ -146,10 +168,15 @@ require('includes/header.php');
                     <label for="time">Time: </label>
                     <input id="time" name="time" type="text" placeholder="HH:MM" value="" />
                     
-                    <label for="walking">Running: </label>
+                    
+                    <label for="walking">Walking: </label>
                     <input type="radio" name="type"
-					<?php if (isset($type) && $type=="walking") echo "checked";?>
+                    <?php if (isset($type) && $type=="walking") echo "checked";?>
                     value="walking">
+                    <label for="running">Running: </label>
+                    <input type="radio" name="type"
+					<?php if (isset($type) && $type=="running") echo "checked";?>
+                    value="running">
                     <label for="bicycling">Bicycling: </label>
                     <input type="radio" name="type"
                     <?php if (isset($type) && $type=="bicycling") echo "checked";?>
@@ -157,8 +184,18 @@ require('includes/header.php');
                 
                     <input type="submit" value="I'm done with the route" />
                 </form>
-                 
-                        
+                 </br>
+                 </br>
+                  
+                  <h3>Add GMX path to map </h3>
+                  <p>You have to first upload the GMX file att your memberpage, and then copy the filename in the box below</p>
+                      
+                 <form id="include-gpx-file">
+                    
+                    <input type="text" name="gmx_path" value="" />
+ 
+                    <input type="submit" value="Get GMX" />
+                 </form>
                 
     			<?php
 				

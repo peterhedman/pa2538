@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `resetToken` varchar(255) DEFAULT NULL,
   `resetComplete` varchar(3) DEFAULT 'No',
   `rank` tinyint(2) unsigned NOT NULL DEFAULT '0',
+  `pace` float(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`userID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -25,12 +26,16 @@ CREATE TABLE IF NOT EXISTS `trainingsession` (
   `user_id` int(10) unsigned NOT NULL,
   `date` DATE NOT NULL DEFAULT '0000-00-00',
   `time` TIME NOT NULL DEFAULT '00:00:00',
+  `parent_session` int(10) unsigned NOT NULL DEFAULT '0',
+  `join_location` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Is parent Session',
+  `stop_location` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Is parent Session',
   `start_location` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '(lat, long)',
   `end_location` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '(lat, long)',
   `waypoints` varchar(512) COLLATE utf8_unicode_ci NOT NULL DEFAULT '(lat, long)',
   `start_address` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'undefined',
   `distance` int(20) unsigned NOT NULL DEFAULT '0',
   `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'type',
+  `default_speed` tinyint(2) unsigned NOT NULL DEFAULT '0',
   `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `my_unique_key` (`user_id`, `date`, `time`)

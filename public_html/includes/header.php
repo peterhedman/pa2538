@@ -8,13 +8,15 @@
     <!-- jQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC2P69gjw6Wg4GxD8z-VKvWgx5b78rucf0&signed_in=true&callback=initMap"></script> -->
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC2P69gjw6Wg4GxD8z-VKvWgx5b78rucf0"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC2P69gjw6Wg4GxD8z-VKvWgx5b78rucf0&sensor=false&libraries=geometry"></script>
 
 		<script src="js/script.js"></script>
         <script src="js/google-maps-add-training.js"></script>
         <script src="js/google-maps-join-training.js"></script>
         <script src="js/jquery.datetimepicker.full.min.js"></script>
-        
+        <script src="js/underscore-min.js"></script>
+        <!--<script src="js/html2canvas.js"></script>
+		<script src="js/canvas2ImagePlugin.js"></script>-->
         
         <!-- Costum Google Fonts -->
 		<link href="https://fonts.googleapis.com/css?family=ABeeZee" rel="stylesheet">

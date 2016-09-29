@@ -25,9 +25,14 @@ require('includes/header.php');
 				
 				foreach($trainings as $training){
 				
-					if($training->getDate() >= date("Y-m-d H:i:s")){
+					if($training->getDate() >= date("Y-m-d H:i:s") && $training->getParent() == 0){
 						$address =  $training->getStartAdress();
 						echo '<a href="training-single.php?id='.$training->getID().'">From '. $address[0] . ', ' . $address[1] . '</a>';
+						echo '</br>When: ' . $training->getDateOnly();
+						echo '</br>At: ' . $training->getTime();
+						echo '</br>Type: ' . $training->getType();
+						echo '</br>Distance: ' . $training->getDistance() . ' meters';
+						echo '</br>';
 					}
 				
 				}

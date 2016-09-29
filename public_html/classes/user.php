@@ -52,6 +52,44 @@ class User extends Password{
 			return true;
 		}
 	}
+	
+	public function getRank(){
+		if(isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == true){
+			$userID = $_SESSION['userID'];
+			
+			try {
+			
+				$stmt = $this->_db->prepare('SELECT rank FROM users WHERE userID = :userID');
+				$stmt->execute(array(':userID' => $userID));
+				
+				$row = $stmt->fetch();
+				return $row["rank"];
+				
+			} catch(PDOException $e) {
+		    echo '<p class="bg-danger">'.$e->getMessage().'</p>';
+			error_log($e->getMessage());
+		}
+		}
+	}
+	
+	public function getPace(){
+		if(isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == true){
+			$userID = $_SESSION['userID'];
+			
+			try {
+			
+				$stmt = $this->_db->prepare('SELECT pace FROM users WHERE userID = :userID');
+				$stmt->execute(array(':userID' => $userID));
+				
+				$row = $stmt->fetch();
+				return $row["pace"];
+				
+			} catch(PDOException $e) {
+		    echo '<p class="bg-danger">'.$e->getMessage().'</p>';
+			error_log($e->getMessage());
+		}
+		}
+	}
 
 }
 

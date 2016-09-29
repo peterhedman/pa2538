@@ -161,6 +161,95 @@ function initMap() {
 		waypoint_markers[i].setMap(null);
 	  }
 	}
+	
+	
+	$("#include-gpx-file").submit(function(event){
+	
+	event.preventDefault();
+
+	//console.log("startPointLocation: " + startPointLocation + " endPointLocation: " + endPointLocation);
+	
+    // Abort any pending request
+    if (request) {
+        request.abort();
+    }
+	
+    // setup some local variables
+    var $form = $(this);
+	
+	$form.hide(800);
+	
+    // Let's select and cache all the fields
+    var $inputs = $form.find("input, select, button, textarea");
+
+    // Serialize the data in the form
+    var serializedData = $form.serialize();
+
+    // Let's disable the inputs for the duration of the Ajax request.
+    // Note: we disable elements AFTER the form data has been serialized.
+    // Disabled form elements will not be serialized.
+    $inputs.prop("disabled", true);
+	
+	var fileName = serializedData.split('=');
+	
+	console.log(fileName[1]);
+	
+    // Fire off the request to /form.php
+    request = $.ajax({
+	type: "GET",
+	url: "uploads/" + fileName[1],
+	dataType: "xml",
+	success: function (xml) {
+		var points = [];
+		var bounds = new google.maps.LatLngBounds();
+		$(xml).find("trkpt").each(function () {
+			 var lat = $(this).attr("lat");
+			 var lon = $(this).attr("lon");
+			 var p = new google.maps.LatLng(lat, lon);
+			 points.push(p);
+			 bounds.extend(p);
+		});
+		var poly = new google.maps.Polyline({
+			 // use your own style here
+			 path: points,
+			 strokeColor: "#FF00AA",
+			 strokeOpacity: .7,
+			 strokeWeight: 4
+		});
+		poly.setMap(map);
+		// fit bounds to track
+		map.fitBounds(bounds);
+	}
+	});
+	
+	request.done(function (response, textStatus, jqXHR){
+        // Log a message to the console
+		//sends the address via Ajax
+		sendAddress(markers_send[0]);
+        console.log("Hooray, it worked with GMX!");
+    });
+
+    // Callback handler that will be called on failure
+    request.fail(function (jqXHR, textStatus, errorThrown){
+        // Log the error to the console
+        console.error(
+            "The following error occurred: "+
+            textStatus, errorThrown
+        );
+    });
+	
+    // Callback handler that will be called regardless
+    // if the request failed or succeeded
+    request.always(function () {
+        // Reenable the inputs
+        $inputs.prop("disabled", false);
+    });
+
+});
+	
+	
+	
+	
         
 }
 
@@ -262,6 +351,27 @@ function sendAddress(latlng) {
 	});
 }
 
+function takeImage() {
+    html2canvas($('#map')[0], {
+		height: 200,
+		width: 350,
+		useCORS: true,
+		allowTaint: true,
+		proxy: "http://pa2538.topweb.se",
+		onrendered: function (canvas) {
+      window.canvas2ImagePlugin.saveImageDataToLibrary(
+        function(msg){
+          console.log(msg) //path where image is saved
+        },
+        function(err){
+            console.log(err);
+        },
+        canvas // pass canvas as third parameter
+      );
+    }
+  });
+}
+
 
 // Bind to the submit event of our form
 $("#done-with-route").submit(function(event){
@@ -272,6 +382,8 @@ $("#done-with-route").submit(function(event){
 			throw new Error("Please fill in all required");
 		}
     });
+	
+	//takeImage();
 	
 	var markersJson = JSON.stringify(markers_send);
 	
@@ -336,6 +448,9 @@ $("#done-with-route").submit(function(event){
     event.preventDefault();
 
 });
+
+
+
 
 }
 });

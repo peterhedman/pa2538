@@ -11,7 +11,10 @@ class Training{
 	private $start_address;
 	private $distance;
 	private $type;
-	private $ts;
+	private $default_speed;
+	private $parent_session;
+	private $join_location;
+	private $stop_location;
 	
 
     function __construct(){
@@ -20,7 +23,7 @@ class Training{
 	
 	public function __toString()
     {
-        return "id: " . $this->id . "</br>nuser_id: " . $this->user_id . "</br>date: " . $this->date . "</br>time: " . $this->time . "</br>startPos: " . $this->start_location . "</br>endPos: " . $this->end_location . "</br>waypoint: " . $this->waypoints . "</br>StartAdress: " . $this->start_address . "</br>Dist: " . $this->distance . "</br>type: " . $this->type . "</br>ts: " . $this->ts . "</br></br>";
+        return "id: " . $this->id . "</br>nuser_id: " . $this->user_id . "</br>date: " . $this->date . "</br>time: " . $this->time . "</br>startPos: " . $this->start_location . "</br>endPos: " . $this->end_location . "</br>waypoint: " . $this->waypoints . "</br>StartAdress: " . $this->start_address . "</br>Dist: " . $this->distance . "</br>type: " . $this->type . "</br>ts: " . "</br>Default speed: " . $this->default_speed . "</br>parent_session: " . $this->parent_session . "</br>join_location: " . $this->join_location . "</br>stop_location: " . $this->stop_location ."</br>ts: " . $this->ts . "</br></br>";
     }
 	
 	public function getID(){
@@ -51,7 +54,7 @@ class Training{
 	}
 	
 	public function getTime(){
-		return $this->time;	
+		return substr($this->time, 0, -3);	
 	}
 	
 	public function getType(){
@@ -61,6 +64,23 @@ class Training{
 	public function getUserID(){
 		return $this->user_id;
 		
+	}
+	
+	public function getDistance(){
+		return $this->distance;	
+	}
+	public function getDefaultSpeed(){
+		return $this->default_speed;	
+	}
+	public function getJoinLocation(){
+		return $this->join_location;
+	}
+	public function getStopLocation(){
+		return $this->stop_location;	
+	}
+	
+	public function getParent(){
+		return $this->parent_session;	
 	}
 
 }
