@@ -15,15 +15,107 @@ $update_rank = isset($_POST['update_rank']) ? $_POST['update_rank'] : 0;
 error_log("rank: " . $rank);
 
 if (!empty($remove_user)) {
-   	
-	$stmt = $db->prepare("DELETE FROM users WHERE userID = :userID");
-	$stmt->execute(array(':userID' => $userid));
+	// IF is parent needs to fix new owner before deletion
+	try {
+		//gets all trainingsessions of user
+		$stmt = $db->prepare('SELECT * FROM trainingsession WHERE user_id = :userID');
+		$stmt->execute(array(
+		':userID' => $userid
+		));
+		$all_this_user_sessions = $stmt->fetchAll();
+		
+		
+		foreach($all_this_user_sessions as $session_single){
+		
+			if($session_single["parent_session"] == 0){
+				
+				$counter = 0;
+				//Gets all participant of this session
+				$stmt = $db->prepare('SELECT u.email, u.userID FROM users AS u INNER JOIN trainingkeeper AS t ON u.userID = t.users WHERE t.trainingsession = :trainingID');
+				$stmt->execute(array(
+						':trainingID' => $session_single["id"]
+						));	
+				$single_participants = $stmt->fetchAll();
+				
+				//gets id of latest participant
+				foreach ($single_participants as $participants ) {
+					if($participants["userID"] != $userid){
+						$secundUserID = $participants["userID"];	
+					}
+					
+					$counter++;
+				}
+				
+				if($counter > 1){
+				
+					//deletes the current user from trainingsession and training keeper
+					$stmt = $db->prepare("DELETE FROM trainingsession WHERE id = :session_id AND user_id = :user_id");
+					$stmt->execute(array(
+					':user_id' => $userid,
+					':session_id' => $session_single["id"]
+					));
+					
+					//gets the row id of the latest participant if this trainingsession
+					$stmt = $db->prepare('SELECT id FROM trainingsession WHERE user_id = :userID AND parent_session = :parentIDCurrent');
+					$stmt->execute(array(
+					':parentIDCurrent' => $session_single["id"],
+					':userID' => $secundUserID
+					));
+					$single_new_user_row = $stmt->fetch();
+					$single_new_user_id = $single_new_user_row['id'];
+					
+					//Insert the new owenr into traininh keeper
+					$stmt = $db->prepare('INSERT INTO trainingkeeper (users,trainingsession) VALUES (:users, :trainingsession)');
+					$stmt->execute(array(
+					':users' => $secundUserID,
+					':trainingsession' => $single_new_user_id
+					));
+					
+					//Updates the latest participant to session owenr
+					$stmt = $db->prepare('UPDATE trainingsession SET parent_session = :parentID WHERE user_id = :userID AND parent_session = :parentIDCurrent');
+					$stmt->execute(array(
+					':parentID' => 0,
+					':parentIDCurrent' => $session_single["id"],
+					':userID' => $secundUserID
+					));
+					
+					//Sets new parent on the children
+					$stmt = $db->prepare('UPDATE trainingsession SET parent_session = :parentID WHERE parent_session = :parentIDCurrent');
+					$stmt->execute(array(
+					':parentID' => $single_new_user_id,
+					':parentIDCurrent' => $session_single["id"]
+					));
+					
+					//inserts the children in trainingkeeper again
+					foreach ($single_participants as $participants ) {
+						if($participants["userID"] != $userid && $participants["userID"] != $single_new_user_id){
+							$stmt = $db->prepare('INSERT INTO trainingkeeper (users,trainingsession) VALUES (:users, :trainingsession)');
+							$stmt->execute(array(
+							':users' => $participants["userID"],
+							':trainingsession' => $single_new_user_id
+							));
+						}
+					}
+				}
+			
+			}
+			
+		}
 	
-	$stmt = $db->prepare("DELETE FROM trainingsession WHERE user_id  = :user_id ");
-	$stmt->execute(array(':user_id ' => $userid));
+	} catch(PDOException $e) {
+		echo '<p class="bg-danger">'.$e->getMessage().'</p>';
+		error_log("error: " . $e->getMessage());
+	}
 	
-	$stmt = $db->prepare("DELETE FROM trainingkeeper WHERE users  = :user_id ");
-	$stmt->execute(array(':user_id ' => $userid));
+	try {
+		//AND finaly delete from users
+		$stmt = $db->prepare("DELETE FROM users WHERE userID = :userID");
+		$stmt->execute(array(':userID' => $userid));
+		
+	} catch(PDOException $e) {
+		echo '<p class="bg-danger">'.$e->getMessage().'</p>';
+		error_log("error: " . $e->getMessage());
+	}
 	
 	$user->logout();
 	header('Location: index.php');

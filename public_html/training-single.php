@@ -288,7 +288,7 @@ if(!empty($all_users)){
 	$count_participants = count($single_participants);
 }
 
-echo $secundUserID;
+//echo $secundUserID;
 
 $withdraw_participation = isset($_POST['withdraw_participation']) ? $_POST['withdraw_participation'] : 0;
 if (!empty($withdraw_participation)) {
@@ -618,7 +618,7 @@ require('includes/header.php');
 					</form>
 
 					  
-				<?php } 
+				<?php 
 				
 				}else {?>
                 
@@ -634,7 +634,9 @@ require('includes/header.php');
                      </form>
                 
                 
-                <?php } ?>
+                <?php } 
+				
+				} // END OVER THIS DATE  ?>
 					
 				<?php 
 				//error_log(print_r($user->getRank()));
