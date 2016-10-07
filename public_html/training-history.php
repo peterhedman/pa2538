@@ -37,6 +37,9 @@ require('includes/header.php');
 							
 							echo $message . " - ";
 							echo '<a href="training-single.php?id='.$training->getID().'">From '. $address[0] . ', ' . $address[1] . '</a>';
+							echo '</br>When: ' . $training->getDateOnly();
+							echo '</br>At: ' . $training->getTime();
+							echo '</br>Type: ' . $training->getType();
 							echo "</br>";
 						} 
 					}
