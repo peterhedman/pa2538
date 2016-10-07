@@ -3,7 +3,46 @@ $( document ).ready(function() {
 	navigationWidth();
 	confirmDialog();
 	dateTimePicker();
+	uploadFunctions();
 });
+
+function uploadFunctions(){
+	$(function () {
+        'use strict';
+        
+        // Define the url to send the image data to
+        var url = 'files.php';
+        
+        // Call the fileupload widget and set some parameters
+        $('#fileupload').fileupload({
+            url: url,
+            dataType: 'json',
+            done: function (e, data) {
+                // Add each uploaded file name to the #files list
+                $.each(data.result.files, function (index, file) {
+					
+					var message = "Successfully added";
+					if(typeof file.error !== 'undefined'){
+						message = file.error + ", not added";
+					}
+					
+                    $('<li/>').text(file.name + " - " + message).appendTo('#files');
+                });
+            },
+            progressall: function (e, data) {
+                // Update the progress bar while files are being uploaded
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#progress .bar').css(
+                    'width',
+                    progress + '%'
+                );
+            }
+        });
+    });
+	
+}
+
+
 
 //http://xdsoft.net/jqplugins/datetimepicker/
 function dateTimePicker(){

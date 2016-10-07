@@ -6,7 +6,7 @@ if(!$user->is_logged_in()){ header('Location: login.php'); }
 $userid = $_SESSION['userID'];
 
 //define page title
-$title = 'Training History';
+$title = 'My Trainings';
 
 //include header template
 require('includes/header.php'); 
@@ -23,14 +23,42 @@ require('includes/header.php');
                 <?php
 				
 				
-				
+				echo "<h3>Upcoming Sessions</h3>";
 				foreach($trainings as $training){
 				
 					if($training->getUserID() == $userid){
-						$address =  $training->getStartAdress();
-						echo '<a href="training-single.php?id='.$training->getID().'">From '. $address[0] . ', ' . $address[1] . '</a>';
+						
+						if($training->getDate() >= date("Y-m-d H:i:s")){
+							$address =  $training->getStartAdress();
+							$message = "Creator";
+							if($training->getParent() != "0"){
+								$message = "Participant";
+							}
+							
+							echo $message . " - ";
+							echo '<a href="training-single.php?id='.$training->getID().'">From '. $address[0] . ', ' . $address[1] . '</a>';
+							echo "</br>";
+						} 
 					}
+				}
+				echo "</br><hr>";
+				echo "<h3>Previous Sessions</h3>";
+				foreach($trainings as $training){
 				
+					if($training->getUserID() == $userid){
+						
+						if($training->getDate() < date("Y-m-d H:i:s")){
+							$address =  $training->getStartAdress();
+							$message = "Creator";
+							if($training->getParent() != "0"){
+								$message = "Participant";
+							}
+							
+							echo $message . " - ";
+							echo '<a href="training-single.php?id='.$training->getID().'">From '. $address[0] . ', ' . $address[1] . '</a>';
+							echo "</br>";
+						} 
+					}
 				}
 				
 				

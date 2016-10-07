@@ -15,6 +15,13 @@
         <script src="js/google-maps-join-training.js"></script>
         <script src="js/jquery.datetimepicker.full.min.js"></script>
         <script src="js/underscore-min.js"></script>
+        
+        <script src="js/jquery.ui.widget.js"></script>
+        <script src="js/jquery.iframe-transport.js"></script>
+        <script src="js/jquery.fileuploads.js"></script>
+        
+        
+        
         <!--<script src="js/html2canvas.js"></script>
 		<script src="js/canvas2ImagePlugin.js"></script>-->
         
@@ -28,6 +35,7 @@
         <!-- The main CSS file -->
         <link href="css/style.css" rel="stylesheet">
         <link href="css/jquery.datetimepicker.min.css" rel="stylesheet">
+        <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet">
 
         <!--[if lt IE 9]>
@@ -65,8 +73,8 @@
             <?php
             if($user->is_logged_in()){?>
             	<li <?php if ($thisPage=="Add New Training") echo " id=\"currentpage\""; ?>><a href="training-add-session.php">Add New Training</a></li>
-                <li <?php if ($thisPage=="Training History") echo " id=\"currentpage\""; ?>><a href="training-history.php">Training History</a></li>
-				<li <?php if ($title=="Members Page") echo " id=\"currentpage\""; ?>><a href="memberpage.php">Members Page</a></li>
+                <li <?php if ($thisPage=="My Trainings") echo " id=\"currentpage\""; ?>><a href="training-history.php">My Trainings</a></li>
+				<li <?php if ($title=="Members Page") echo " id=\"currentpage\""; ?>><a href="memberpage.php">My Profile</a></li>
 				<li <?php if ($title=="Logout") echo " id=\"currentpage\""; ?>><a href="logout.php">Logout</a></li>
 			<?php } else { ?>
 			 	<li <?php if ($title=="Login") echo " id=\"currentpage\""; ?>><a href="login.php">Login</a></li>

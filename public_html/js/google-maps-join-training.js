@@ -453,6 +453,7 @@ function displayUserJoinEndData(distance){
 	extraTime = extraTimeMinutes + "min " + ExtraTimeSecunds + "sec"
 	
 	document.getElementById('totalTime').innerHTML = extraTime;
+	document.getElementById('totalDistance').innerHTML = distance;
 }
 
 
@@ -497,6 +498,7 @@ function computeTotalDistance(result) {
 	
 	document.getElementById('totalTime').innerHTML = extraTime;
 	document.getElementById('timeEnd').innerHTML = time;
+	document.getElementById('totalDistance').innerHTML = distance;
 	
 }
 

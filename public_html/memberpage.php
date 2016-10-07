@@ -18,8 +18,13 @@ if (!empty($remove_user)) {
    	
 	$stmt = $db->prepare("DELETE FROM users WHERE userID = :userID");
 	$stmt->execute(array(':userID' => $userid));
-	/*$stmt = $db->prepare("DELETE FROM trainingsession WHERE user_id  = :user_id ");
-	$stmt->execute(array(':user_id ' => $userid));*/
+	
+	$stmt = $db->prepare("DELETE FROM trainingsession WHERE user_id  = :user_id ");
+	$stmt->execute(array(':user_id ' => $userid));
+	
+	$stmt = $db->prepare("DELETE FROM trainingkeeper WHERE users  = :user_id ");
+	$stmt->execute(array(':user_id ' => $userid));
+	
 	$user->logout();
 	header('Location: index.php');
 }
@@ -90,6 +95,24 @@ $stmt = $db->prepare("UPDATE trainingsession SET start_address = :start_address 
 	));
 
 */
+$counter_own_sessions = 0;
+$counter_join_sessions = 0;
+$total_participation_distance = 0;
+
+foreach($trainings as $training){
+	if($training->getUserID() == $userid){
+		
+		if($training->getParent() == 0){
+			$counter_own_sessions++;
+		}else{
+			$counter_join_sessions++;
+		}
+		
+		$total_participation_distance = $total_participation_distance + $training->getDistance();
+		
+	}
+}
+
 
 
 //include header template
@@ -102,8 +125,17 @@ require('includes/header.php');
 
 	    
 			
-				<h2>Member only page - Welcome <?php echo $_SESSION['username']; ?></h2>
+				<h2>Welcome <?php echo $_SESSION['username']; ?></h2>
+                
+                <hr>
 				
+                <h2>Statistics</h2>
+                <?php
+                echo "Created sessions: " . $counter_own_sessions . "</br>";
+				echo "Joined Sessions: " . $counter_join_sessions . 	"</br>";
+				echo "Total participation distance: " . $total_participation_distance . " m</br>";	
+                
+				?>
 				<hr>
 				
                 <h2>Update pace</h2>
@@ -147,19 +179,37 @@ require('includes/header.php');
             <hr>
             <h2>Upload GMX</h2>
             <p>Remember the filename</p>
-            <form enctype="multipart/form-data" action="uploader.php" method="POST">
-            <input type="hidden" name="MAX_FILE_SIZE" value="100000" />
-            Choose a file to upload: <input name="uploadedfile" type="file" />
-            <input type="submit" value="Upload File" />
-            </form>
-            <h4>All uploaded GMX </h4>
-            <?php $files = scandir('uploads'); 
-			
-			foreach($files as $file)
-			{
-				echo $file;
-				echo "</br>";
-			}
+            <!-- Button to select & upload files -->
+            <span class="btn btn-success fileinput-button">
+            <span>Select files...</span>
+            <!-- The file input field used as target for the file upload widget -->
+            <input id="fileupload" type="file" name="files[]" multiple>
+            </span>
+            
+            <!-- The global progress bar -->
+            <p>Upload progress</p>
+            <div id="progress" class="progress progress-success progress-striped">
+            <div class="bar"></div>
+            </div>
+            
+            <!-- The list of files uploaded -->
+            <p>Files uploaded:</p>
+            <ul id="files"></ul>
+            
+            
+            <h4>All uploaded GPX </h4>
+            <?php $files = scandir('files'); 
+            
+			$counter = 0;
+            foreach($files as $file)
+            {
+				$counter++;
+				if($counter > 2){
+					echo $file;
+            		echo "</br>";
+				}
+            
+            }
 			
 			
 			

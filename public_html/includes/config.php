@@ -44,6 +44,10 @@ $user = new User($db);
 
 //Gets all the sessions from db
 $trainings = $db->query('SELECT * FROM trainingsession')->fetchAll(PDO::FETCH_CLASS, 'Training');
+function sortFunction( $a, $b ) {
+	return strtotime($a->getDate()) - strtotime($b->getDate());
+}
+usort($trainings, "sortFunction");
 
 date_default_timezone_set('Europe/Stockholm');
 

@@ -33,14 +33,34 @@ foreach($trainings as $training){
 
 }
 
+$delete_session = isset($_POST['delete_session']) ? $_POST['delete_session'] : 0;
+if (!empty($delete_session)) {
+	$stmt = $db->prepare("DELETE FROM trainingsession WHERE id = :session_id");
+	$stmt->execute(array(
+	':session_id' => $id
+	));
+	header('Location: training-sessions.php');
+}
+
+
+
+
 //Removes the participation
 $remove_participant = isset($_POST['remove_participation']) ? $_POST['remove_participation'] : 0;
 if (!empty($remove_participant)) {
    	
-	$stmt = $db->prepare("DELETE FROM trainingsession WHERE user_id = :user_id");
-	$stmt->execute(array(':user_id' => $userid));
-	$stmt = $db->prepare("DELETE FROM trainingkeeper WHERE users  = :user_id ");
-	$stmt->execute(array(':user_id' => $userid));
+	$stmt = $db->prepare("DELETE FROM trainingsession WHERE user_id = :user_id AND parent_session = :session_id");
+	$stmt->execute(array(
+	':user_id' => $userid,
+	':session_id' => $id
+	));
+	
+	$stmt = $db->prepare("DELETE FROM trainingkeeper WHERE users  = :user_id AND trainingsession = :session_id");
+	$stmt->execute(array(
+	':user_id' => $userid,
+	':session_id' => $id
+	));
+	
 	header('Location: training-sessions.php');
 }
 
@@ -80,7 +100,7 @@ if(!empty($map_adress))
 	$start_adress_pos = json_decode($start_adress_pos, true);
 	$start_adress_pos = json_encode($start_adress_pos);
 	
-	error_log("startin: " . $start_adress_pos);
+	//error_log("startin: " . $start_adress_pos);
 	//update users record set the active column to Yes where the usersID and active value match the ones provided in the array
 	$stmt = $db->prepare("UPDATE trainingsession SET start_address = :start_address WHERE start_location = :start_location");
 	$stmt->execute(array(
@@ -187,19 +207,25 @@ $email_invite = isset($_POST['email_invite']) ? $_POST['email_invite'] : 0;
 $email_invite_not_reg = isset($_POST['email_invite_not_reg']) ? $_POST['email_invite_not_reg'] : 0;
 
 if(!empty($email_invite)){
-	//send email
-	$to = $email_invite;
-	$subject = "Invatation";
-	$body = "<p>Hello you have been invited to participate in a trainingsession.</p>
-	<p>Please click to link to join: <a href='".DIR."training-single.php?id=$id'>".DIR."training-single.php?id=$id</a></p>
-	<p>Best Regards</p>";
-
-	$mail = new Mail();
-	$mail->setFrom(SITEEMAIL);
-	$mail->addAddress($to);
-	$mail->subject($subject);
-	$mail->body($body);
-	$mail->send();
+	
+	$nEmail_invite = count($email_invite);
+     
+    for($i=0; $i < $nEmail_invite; $i++)
+    {
+		//send email
+		$to = $email_invite[$i];
+		$subject = "Invatation";
+		$body = "<p>Hello you have been invited to participate in a trainingsession.</p>
+		<p>Please click to link to join: <a href='".DIR."training-single.php?id=$id'>".DIR."training-single.php?id=$id</a></p>
+		<p>Best Regards</p>";
+	
+		$mail = new Mail();
+		$mail->setFrom(SITEEMAIL);
+		$mail->addAddress($to);
+		$mail->subject($subject);
+		$mail->body($body);
+		$mail->send();
+	}
 }
 
 if(!empty($email_invite_not_reg)){
@@ -222,14 +248,116 @@ $children;
 
 
 try {
-	$stmt = $db->prepare('SELECT email, userID FROM users');
+	$stmt = $db->prepare('SELECT u.email, u.userID FROM users AS u INNER JOIN trainingkeeper AS t ON u.userID = t.users WHERE t.trainingsession = :trainingID');
+	$stmt->execute(array(
+			':trainingID' => $id
+			));	
+	$single_participants = $stmt->fetchAll();
+	//$user_emails = $stmt->fetchAll();
+	
+	$stmt = $db->prepare('SELECT email, userID FROM users WHERE active="Yes"');
 	$stmt->execute();	
-	$user_emails = $stmt->fetchAll();
+	$all_users = $stmt->fetchAll();
+	
+	$stmt = $db->prepare('SELECT userID, rank, pace FROM users WHERE active="Yes"');
+	$stmt->execute();	
+	$all_users_rank = $stmt->fetchAll();
 		
 } catch(PDOException $e) {
 	echo '<p class="bg-danger">'.$e->getMessage().'</p>';
 	error_log("error: " . $e->getMessage());
 }
+
+
+//Remove participants from all user array
+if(!empty($all_users)){
+	$user_emails = $all_users;
+	foreach ($single_participants as $participants ) {
+		if (($key = array_search($participants, $user_emails)) !== false) {
+			unset($user_emails[$key]);
+		}
+		
+		if($participants["userID"] != $userid){
+			$secundUserID = $participants["userID"];	
+		}
+		
+		
+	}
+	
+	//Counts participants
+	$count_participants = count($single_participants);
+}
+
+echo $secundUserID;
+
+$withdraw_participation = isset($_POST['withdraw_participation']) ? $_POST['withdraw_participation'] : 0;
+if (!empty($withdraw_participation)) {
+	try {
+		//deletes the current user from trainingsession and training keeper
+		$stmt = $db->prepare("DELETE FROM trainingsession WHERE id = :session_id AND user_id = :user_id");
+		$stmt->execute(array(
+		':user_id' => $userid,
+		':session_id' => $id
+		));
+		
+		//gets the row id of the latest participant if this trainingsession
+		$stmt = $db->prepare('SELECT id FROM trainingsession WHERE user_id = :userID AND parent_session = :parentIDCurrent');
+		$stmt->execute(array(
+		':parentIDCurrent' => $id,
+		':userID' => $secundUserID
+		));
+		$single_new_user_row = $stmt->fetch();
+		$single_new_user_id = $single_new_user_row['id'];
+		
+		//Insert the new owenr into traininh keeper
+		$stmt = $db->prepare('INSERT INTO trainingkeeper (users,trainingsession) VALUES (:users, :trainingsession)');
+		$stmt->execute(array(
+		':users' => $secundUserID,
+		':trainingsession' => $single_new_user_id
+		));
+		
+		//Updates the latest participant to session owenr
+		$stmt = $db->prepare('UPDATE trainingsession SET parent_session = :parentID WHERE user_id = :userID AND parent_session = :parentIDCurrent');
+		$stmt->execute(array(
+		':parentID' => 0,
+		':parentIDCurrent' => $id,
+		':userID' => $secundUserID
+		));
+		
+		//Sets new parent on the children
+		$stmt = $db->prepare('UPDATE trainingsession SET parent_session = :parentID WHERE parent_session = :parentIDCurrent');
+		$stmt->execute(array(
+		':parentID' => $single_new_user_id,
+		':parentIDCurrent' => $id
+		));
+		
+		//inserts the children in trainingkeeper again
+		foreach ($single_participants as $participants ) {
+			if($participants["userID"] != $userid && $participants["userID"] != $single_new_user_id){
+				$stmt = $db->prepare('INSERT INTO trainingkeeper (users,trainingsession) VALUES (:users, :trainingsession)');
+				$stmt->execute(array(
+				':users' => $participants["userID"],
+				':trainingsession' => $single_new_user_id
+				));
+			}
+		}
+		
+		/*
+		
+		*/
+		
+	} catch(PDOException $e) {
+	echo '<p class="bg-danger">'.$e->getMessage().'</p>';
+	error_log("error: " . $e->getMessage());
+	}
+
+	header('Location: training-sessions.php');
+	
+}
+
+
+
+
 //include header template
 require('includes/header.php'); 
 ?>
@@ -278,7 +406,41 @@ require('includes/header.php');
                     
                     <div id="map-single"></div>
                     
-                    <?php if($currentUserInfo == "current_user_event"){ ?>
+					<?php
+                    foreach($all_users_rank as $users){
+						if($training->getUserID() == $users["userID"]){
+							
+							$rankOutput = "";
+							
+							if($users["rank"] == 0){
+								$rankOutput = "Beginner";
+							} else if($users["rank"] == 1){
+								$rankOutput = "Medium";
+							} else if($users["rank"] == 2){
+								$rankOutput = "Advanced";
+							} else {
+								$rankOutput = "Costum - Pace: " . $users["pace"];
+							}
+							
+							echo '<h3>Rank: ' . $rankOutput . '</h3>';
+							echo '</br>';
+						}
+					}
+					?>
+                    
+                    
+                    
+                    
+                    <?php if($currentUserInfo == "current_user_event"){ 
+					
+					
+					
+					if($count_participants == 1 && $training->getDate() >= date("Y-m-d H:i:s"))
+					{
+					
+					?>
+                    
+                    
                     
                     <form id="update-route">
                 
@@ -304,14 +466,18 @@ require('includes/header.php');
                     value="bicycling">
                 
                     <input type="submit" value="Update route" />
-                </form>
+                	</form>
                 
+                <?php } else{ ?>
+                	<p>Total time: <span id="totalTime"></span></p>
+                    <P>Total distance: <span id="totalDistance"></span></P>
                 
+                <?php } ?>
                 
                 <table width="100%">
                   <tr>
-                    <th>Training Start Time</th>
-                    <th>Your End Time</th>
+                    <th align="justify" style="text-align:center !important;">Training Start Time</th>
+                    <th align="justify" style="text-align:center !important;">Your End Time</th>
                   </tr>
                   <tr>
                     <td>Date: <?php echo $training->getDateOnly() ?></td>
@@ -326,8 +492,58 @@ require('includes/header.php');
                     <td>Total time: <span id="totalTime"></span></td>
                     <!-- <td>$100</td> -->
                   </tr>
-                </table> 
+                </table>
+                 </br>
+                 
+                 <?php if($training->getDate() >= date("Y-m-d H:i:s")){ ?>
+                <h3>Training Session Participants</h3>
+                    <?php foreach ( $single_participants as $participants ) { 
+						echo $participants["email"];
+						echo "</br>";
+					
+                    } ?>
+                   
+                    <h3>Send invatation</h3>
+                    <form name='email_invite_registred' method='post'>
+                    <label for='email_invite[]'>Select users you want to invite:</label><br>
+                    <select multiple="multiple" name="email_invite[]">
+                    <?php foreach ( $user_emails as $var ) { 
+						//if($var["userID"] != $userid ){ ?>
+                    	<option value="<?php echo $var["email"]; ?>"><?php echo $var["email"]; ?></option>
+                    
 
+					<?php //} 
+					}?>
+                    </select>
+					
+					
+                    </br>
+                    <input type='submit' class='confirm' name='submit' value='Send'</br>
+                    </form>
+                    </br>
+
+                    <h4>Inviate non registered user</h4>
+                    <form name='email_invite_not_registred' method='post'>
+                    <input id="email" name="email_invite_not_reg" type="email" placeholder="Email" value="" />
+					<input type='submit' class='confirm' name='submit' value='Send'</br>
+					</form>
+                    
+                    <?php
+                    if($count_participants == 1){ ?>
+					<h3>Delete session</h3>
+					<form name='delete_participation_delete' method='post'>
+					<input type='submit' class='confirm' name='delete_session' value='Delete Session'</br>
+					</form>
+						
+					<?php } else {?>
+                    <h3>Withdraw participation</h3>
+					<form name='delete_participation_withdraw' method='post'>
+					<input type='submit' class='confirm' name='withdraw_participation' value='Withdraw Participation'</br>
+					</form>
+                    
+                    <?php } 
+					
+				 	}?>
 						
 						
 				<?php } else if ($currentUserInfo == "user_logged_in") { // IF logged in or guest ?> 
@@ -337,44 +553,56 @@ require('includes/header.php');
                     <th>Training Start Time</th>
                     <th>Your Start Time</th>
                     <th>Your End Time</th>
+                    <th>Your Total</th>
                   </tr>
                   <tr>
                     <td>Date: <?php echo $training->getDateOnly() ?></td>
                     <td>Distance from start: <span id="distanceStart"></span></td>
                     <td>Distance from start: <span id="distanceEnd"></span></td>
+                    <td>Total time: <span id="totalTime"></span></td>
                   </tr>
                   <tr>
                     <td>Time: <?php echo $training->getTime() ?></td>
                     <td>Time: <span id="timeStart"></span></td>
                     <td>Time: <span id="timeEnd"></span></td>
+                    <td>Total distance: <span id="totalDistance"></span></td>
                   </tr>
                   <tr>
                     <td>Type: <?php echo $training->getType() ?></td>
                     <td></td>
-                    <td>Total time: <span id="totalTime"></span></td>
+                    <td></td>
+                    <td></td>
                   </tr>
+                  
                 </table> 
-					 
+                
+				<?php if($training->getDate() >= date("Y-m-d H:i:s")){ ?>
                     <?php if(!empty($children)){ ?>
                     </br>
+                    
+                    <h3>Training Session Participants</h3>
+                    <?php foreach ( $single_participants as $participants ) { 
+						echo $participants["email"];
+						echo "</br>";
 					
-                    
+                    } ?>
                     <h3>Send invatation</h3>
-                    <form name='email_invite_not_registred' method='post'>
+                    <form name='email_invite_registred' method='post'>
+                    <label for='email_invite[]'>Select users you want to invite:</label><br>
+                    <select multiple="multiple" name="email_invite[]">
                     <?php foreach ( $user_emails as $var ) { 
-						if($var["userID"] != $userid){ ?>
-                    <label for="email_invite"><?php echo $var["email"]; ?> </label>
+						//if($var["userID"] != $userid ){ ?>
+                    	<option value="<?php echo $var["email"]; ?>"><?php echo $var["email"]; ?></option>
                     
-						<input type="radio" name="email_invite"
-						<?php if (isset($email_invite) && $email_invite==$var["email"]) echo "checked";?>
-						value="<?php echo $var["email"]; ?>">
 
-					<?php 
-						}
-					} ?>
+					<?php //} 
+					}?>
+                    </select>
+					
+					
                     </br>
                     <input type='submit' class='confirm' name='submit' value='Send'</br>
-                    
+                    </form>
                     </br>
 
                     <h4>Inviate non registered user</h4>
@@ -390,7 +618,9 @@ require('includes/header.php');
 					</form>
 
 					  
-				<?php } else {?>
+				<?php } 
+				
+				}else {?>
                 
                 <form id="save-join-route">
                      
@@ -409,11 +639,11 @@ require('includes/header.php');
 				<?php 
 				//error_log(print_r($user->getRank()));
 				} else {
-						echo 'Distance from start: <span id="distanceEnd"></span></br>';
+						echo 'Distance of session: <span id="distanceEnd"></span></br>';
 						echo 'Date: ' . $training->getDateOnly() . '</br>';
 						echo 'Start time: ' . $training->getTime() . '</br>';
-						echo 'Aprox end time: <span id="timeEnd"></span></br>';
-						echo 'Total time: <span id="totalTime"></span></br>';
+						echo '<span style="display: none;" id="timeEnd"></span>';
+						echo '<span style="display: none;" id="totalTime"></span>';
 						echo 'Registor or login to see details.';
 					}
 				}

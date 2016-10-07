@@ -16,7 +16,7 @@ class User extends Password{
 			
 			if (strpos($username_or_email, '@') !== false) {
 				
-				$stmt = $this->_db->prepare('SELECT password, email, userID FROM users WHERE email = :email AND active="Yes" ');
+				$stmt = $this->_db->prepare('SELECT password, username, userID FROM users WHERE email = :email AND active="Yes" ');
 				$stmt->execute(array('email' => $username_or_email));
 			} else {
 				$stmt = $this->_db->prepare('SELECT password, username, userID FROM users WHERE username = :username AND active="Yes" ');
